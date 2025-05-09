@@ -79,7 +79,7 @@ jobs:
       - name: Save SSH key
         shell: cmd
         run: |
-           echo "$PRIVATE_REMOTE" > id_rsa
+           echo %PRIVATE_REMOTE% > id_rsa
         env:
           PRIVATE_REMOTE: ${{ secrets.SSH_PRIVATE }}
 
