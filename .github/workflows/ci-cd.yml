@@ -27,7 +27,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
-          context: ./docker-test
+          context: ./unicicdtest
           push: true
           tags: |
             ${{ env.DOCKER_IMAGE }}:latest
@@ -55,7 +55,7 @@ jobs:
           
       - name: Install dependencies
         run: |
-          cd docker-test
+          cd unicicdtest
           pip install .[test]
           pip install pytest httpx
 
@@ -67,7 +67,7 @@ jobs:
 
       - name: Run tests
         run: |
-          cd docker-test
+          cd unicicdtest
           PYTHONPATH=$(pwd) pytest -v tests
 
   deploy:
@@ -90,7 +90,7 @@ jobs:
       - name: Deploy to server
         shell: cmd
         run: |
-          ssh -i id_rsa -o StrictHostKeyChecking=no -p 58529 dirac@kubsu.tyvik.ru ^
+          ssh -i id_rsa -o StrictHostKeyChecking=no -p 58529 mayer@kubsu.tyvik.ru ^
           "docker pull %DOCKER_IMAGE%:latest && ^
           (docker stop app || exit 0) && ^
           (docker rm app || exit 0) && ^
