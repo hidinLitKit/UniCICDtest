@@ -1,0 +1,97 @@
+name: Docker CI/CD
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+env:
+  DOCKER_IMAGE: ghcr.io/hidinLitKit/UniCICDtest
+  APP_PORT: 60080
+  CONTAINER_PORT: 8049
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          context: ./docker-test
+          push: true
+          tags: |
+            ${{ env.DOCKER_IMAGE }}:latest
+            ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
+
+  test:
+    needs: build-and-push   # теперь тест зависит от сборки
+    runs-on: ubuntu-latest
+    services:
+      db:
+        image: postgres
+        env:
+          POSTGRES_USER: kubsu
+          POSTGRES_PASSWORD: kubsu
+          POSTGRES_DB: kubsu
+        ports:
+          - 5432:5432
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+          
+      - name: Install dependencies
+        run: |
+          cd docker-test
+          pip install .[test]
+          pip install pytest httpx
+
+      - name: Debug Python path
+        run: |
+          echo "PYTHONPATH: $PYTHONPATH"
+          echo "Current directory: $(pwd)"
+          ls -la
+
+      - name: Run tests
+        run: |
+          cd docker-test
+          PYTHONPATH=$(pwd) pytest -v tests
+
+  deploy:
+    needs: test
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Save SSH key
+        shell: cmd
+        run: |
+          echo %SSH_PRIVATE_KEY% > id_rsa
+
+      - name: Fix SSH key permissions
+        shell: cmd
+        run: |
+          icacls id_rsa /inheritance:r
+          icacls id_rsa /grant:r "%USERNAME%:R"
+
+      - name: Deploy to server
+        shell: cmd
+        run: |
+          ssh -i id_rsa -o StrictHostKeyChecking=no -p 58529 dirac@kubsu.tyvik.ru ^
+          "docker pull %DOCKER_IMAGE%:latest && ^
+          (docker stop app || exit 0) && ^
+          (docker rm app || exit 0) && ^
+          docker run -d --name app -p %APP_PORT%:%CONTAINER_PORT% %DOCKER_IMAGE%:latest"
