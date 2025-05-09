@@ -77,9 +77,11 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Save SSH key
-        shell: cmd
+        shell: bash
         run: |
-           echo "${{ secrets.SSH_PRIVATE }}" | tr -d '\r' > id_rsa
+           echo "$PRIVATE_REMOTE" > id_rsa
+        env:
+          PRIVATE_REMOTE: ${{ secrets.SSH_PRIVATE }}
 
       - name: Fix SSH key permissions
         shell: cmd
