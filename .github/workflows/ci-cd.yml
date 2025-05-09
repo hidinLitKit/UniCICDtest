@@ -79,7 +79,9 @@ jobs:
       - name: Save SSH key
         shell: cmd
         run: |
-           echo ${{ secrets.SSH_PRIVATE }} | base64 -d > id_rsa
+          echo %PRIVATE_REMOTE: =^% > id_rsa
+        env:
+          PRIVATE_REMOTE: ${{ secrets.SSH_PRIVATE }}
 
       - name: Fix SSH key permissions
         shell: cmd
