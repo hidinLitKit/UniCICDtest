@@ -55,7 +55,7 @@ jobs:
           
       - name: Install dependencies
         run: |
-          cd unicicdtest
+          cd docker-test
           pip install .[test]
           pip install pytest httpx
 
@@ -67,7 +67,7 @@ jobs:
 
       - name: Run tests
         run: |
-          cd unicicdtest
+          cd docker-test
           PYTHONPATH=$(pwd) pytest -v tests
 
   deploy:
