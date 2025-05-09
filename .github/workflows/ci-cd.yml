@@ -90,7 +90,7 @@ jobs:
       - name: Deploy to server
         shell: cmd
         run: |
-          ssh -i id_rsa -o StrictHostKeyChecking=no -p 58529 mayer@kubsu.tyvik.ru ^
+          ssh -i id_rsa -o StrictHostKeyChecking=no -p 8081 mayer@kubsu.tyvik.ru ^
           "docker pull %DOCKER_IMAGE%:latest && ^
           (docker stop app || exit 0) && ^
           (docker rm app || exit 0) && ^
