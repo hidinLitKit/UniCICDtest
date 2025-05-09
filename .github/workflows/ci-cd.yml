@@ -77,19 +77,15 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Save SSH key
-        shell: powershell
+        shell: cmd
         run: |
-          $env:PRIVATE_REMOTE.replace(" ", "`n") | Out-File -FilePath id_rsa -Encoding ASCII
-        env:
-          PRIVATE_REMOTE: ${{ secrets.SSH_PRIVATE }}
-
+           echo ${{ secrets.SSH_PRIVATE }} | base64 -d > id_rsa
 
       - name: Fix SSH key permissions
         shell: cmd
         run: |
-          icacls id_rsa /remove "BUILTIN\Administrators" > NUL
           icacls id_rsa /inheritance:r
-          icacls id_rsa /grant:r "%USERNAME%:(R)"
+          icacls id_rsa /grant:r "%USERNAME%:R"
 
       - name: Deploy to server
         shell: cmd
