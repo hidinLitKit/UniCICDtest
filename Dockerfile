@@ -18,6 +18,6 @@ COPY --from=builder /app /app
 ENV PYTHONPATH=/app
 ENV PATH=/root/.local/bin:$PATH
 
-EXPOSE 8049
+EXPOSE 8081
 
-CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8049"]
+CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8081"]
