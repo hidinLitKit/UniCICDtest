@@ -76,21 +76,24 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Save SSH key
+        shell: cmd
+        run: |
+           echo %PRIVATE_REMOTE% > id_rsa
+        env:
+          PRIVATE_REMOTE: ${{ secrets.SSH_PRIVATE }}
+
       - name: Fix SSH key permissions
         shell: cmd
         run: |
-          icacls %PRIVATE_REMOTE% /inheritance:r
-          icacls %PRIVATE_REMOTE% /grant:r "%USERNAME%:R"
-        env:
-          PRIVATE_REMOTE: ${{ secrets.SSH_PRIVATE }}
+          icacls id_rsa /inheritance:r
+          icacls id_rsa /grant:r "%USERNAME%:R"
 
       - name: Deploy to server
         shell: cmd
         run: |
-          ssh -i %PRIVATE_REMOTE% -o StrictHostKeyChecking=no -p 58529 mayer@kubsu.tyvik.ru ^
+          ssh -i id_rsa -o StrictHostKeyChecking=no -p 58529 mayer@kubsu.tyvik.ru ^
           "docker pull %DOCKER_IMAGE%:latest && ^
           (docker stop app || exit 0) && ^
           (docker rm app || exit 0) && ^
           docker run -d --name app -p %APP_PORT%:%CONTAINER_PORT% %DOCKER_IMAGE%:latest"
-        env:
-          PRIVATE_REMOTE: ${{ secrets.SSH_PRIVATE }}
