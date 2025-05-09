@@ -9,7 +9,7 @@ on:
 env:
   DOCKER_IMAGE: ghcr.io/hidinlitkit/unicicdtest
   APP_PORT: 60080
-  CONTAINER_PORT: 8049
+  CONTAINER_PORT: 8081
 
 jobs:
   build-and-push:
@@ -90,7 +90,7 @@ jobs:
       - name: Deploy to server
         shell: cmd
         run: |
-          ssh -i id_rsa -o StrictHostKeyChecking=no -p 8081 mayer@kubsu.tyvik.ru ^
+          ssh -i id_rsa -o StrictHostKeyChecking=no -p 58529 mayer@kubsu.tyvik.ru ^
           "docker pull %DOCKER_IMAGE%:latest && ^
           (docker stop app || exit 0) && ^
           (docker rm app || exit 0) && ^
