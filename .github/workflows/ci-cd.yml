@@ -79,7 +79,7 @@ jobs:
       - name: SSH Deploy with Docker
         uses: appleboy/ssh-action@v1.0.0
         with:
-        host: kubsu.tyvik.ru  
+        host: kubsu.tyvik.ru
         username: mayer
         port: 58529
         key: ${{ secrets.SSH_PRIVATE }}
