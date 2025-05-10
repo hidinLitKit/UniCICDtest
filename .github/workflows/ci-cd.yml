@@ -95,13 +95,12 @@ jobs:
         
           icacls $keyPath
 
-      - name: Deploy via SSH
-        shell: powershell
+
+      - name: Deploy to server
+        shell: cmd
         run: |
-          ssh -o StrictHostKeyChecking=no -i "$env:USERPROFILE\.ssh\kub_key" -p 58529 mayer@kubsu.tyvik.ru @"
-          docker pull $env:DOCKER_IMAGE`:latest
-          docker stop app || true
-          docker rm app || true
-          docker run -d --name app -p $env:APP_PORT`:$env:CONTAINER_PORT $env:DOCKER_IMAGE`:latest
-          "@
-            
+          ssh -o StrictHostKeyChecking=no -i "$env:USERPROFILE\.ssh\kub_key" -p 58529 mayer@kubsu.tyvik.ru ^
+          "docker pull %DOCKER_IMAGE%:latest && ^
+          (docker stop app || exit 0) && ^
+          (docker rm app || exit 0) && ^
+          docker run -d --name app -p %APP_PORT%:%CONTAINER_PORT% %DOCKER_IMAGE%:latest"
