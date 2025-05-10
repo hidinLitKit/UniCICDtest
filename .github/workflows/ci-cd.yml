@@ -104,7 +104,7 @@ jobs:
           $token = "${{ secrets.GITHUB_TOKEN }}"
     
           $commands = @"
-          echo "$token" | podman login ghcr.io -u ${{ github.actor }} --password-stdin
+          podman login ghcr.io -u ${{ github.actor }} -p $token
           podman pull ${image}:latest
           podman stop app || echo "No container to stop"
           podman rm app || echo "No container to remove"
