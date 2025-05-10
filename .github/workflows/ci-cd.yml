@@ -7,7 +7,7 @@ on:
     branches: [ "master" ]
 
 env:
-  DOCKER_IMAGE: ghcr.io/hidinlitkit/unicicdtest
+  DOCKER_IMAGE: ghcr.io/hidinLitKit/unicicdtest
   APP_PORT: 60080
   CONTAINER_PORT: 8081
 
@@ -104,34 +104,11 @@ jobs:
           $token = "${{ secrets.GITHUB_TOKEN }}"
     
           $commands = @"
-          # Clean GHCR login
-          podman login ghcr.io -u ${{ github.actor }} -p $token >/dev/null 2>&1 || {
-          echo "Failed to login to GHCR"
-          exit 1
-          }
-
-          # Pull the image with error handling
-          if ! podman pull ${image}:latest; then
-            echo "Failed to pull container image"
-            exit 1
-          fi
-
-          # Clean up existing container
-          podman stop app 2>/dev/null && echo "Stopped existing container" || echo "No running container to stop"
-          podman rm app 2>/dev/null && echo "Removed existing container" || echo "No container to remove"
-
-          # Run new container (choose either host or port mapping, not both)
-          container_id=$(podman run -d \
-            --name app \
-            -p ${appPort}:${containerPort} \
-            ${image}:latest) && \
-          echo "Container started successfully: $container_id" || {
-          echo "Failed to start container"
-          exit 1
-          }
-
-          # Verify container status
-          podman ps -f name=app --format '{{.ID}} {{.Status}} {{.Ports}}'
+          podman login ghcr.io -u ${{ github.actor }} -p $token
+          podman pull ${image}:latest
+          podman stop app || echo "No container to stop"
+          podman rm app || echo "No container to remove"
+          podman run -d --name app -p ${appPort}:${containerPort} ${image}:latest
           "@
     
 
