@@ -104,11 +104,11 @@ jobs:
           $token = "${{ secrets.GITHUB_TOKEN }}"
     
           $commands = @"
-          podman login ghcr.io -u hidinLitKit -p $token
+          podman login ghcr.io -u ${{ github.actor }} -p $token
           podman pull ${image}:latest
           podman stop app || echo "No container to stop"
           podman rm app || echo "No container to remove"
-          podman run -d --name app -p ${appPort}:${containerPort} ${image}:latest
+          podman run --name app --net=host ${image}:latest 
           "@
     
 
