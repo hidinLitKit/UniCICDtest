@@ -99,7 +99,7 @@ jobs:
       - name: Deploy to server
         shell: cmd
         run: |
-          ssh -o StrictHostKeyChecking=no -i $env:USERPROFILE\.ssh\kub_key -p 58529 mayer@kubsu.tyvik.ru ^
+          ssh -v -i "$env:USERPROFILE\.ssh\kub_key" -o StrictHostKeyChecking=no -p 58529 mayer@kubsu.tyvik.ru ^
           "docker pull %DOCKER_IMAGE%:latest && ^
           (docker stop app || exit 0) && ^
           (docker rm app || exit 0) && ^
