@@ -77,17 +77,17 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: SSH Deploy with Docker
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: kubsu.tyvik.ru
-          username: mayer
-          port: 58529
-          key: ${{ secrets.SSH_PRIVATE }}
-          script: |
-            docker pull $DOCKER_IMAGE:latest
+        shell: pwsh
+        env:
+          SSH_KEY: ${{ secrets.SSH_PRIVATE }}
+        run: |
+          $env:SSH_KEY | Out-File -FilePath $env:TEMP\ssh_key -Encoding ASCII
+          docker pull $DOCKER_IMAGE:latest
             docker stop app || true
             docker rm app || true
             docker run -d \
               --name app \
               -p $APP_PORT:$CONTAINER_PORT \
               $DOCKER_IMAGE:latest
+          Remove-Item $env:TEMP\ssh_key
+            
