@@ -97,7 +97,7 @@ jobs:
 
 
       - name: Deploy to server
-        shell: cmd
+        shell: powershell
         run: |
           ssh -v -i "$env:USERPROFILE\.ssh\kub_key" -o StrictHostKeyChecking=no -p 58529 mayer@kubsu.tyvik.ru ^
           "docker pull %DOCKER_IMAGE%:latest && ^
