@@ -77,12 +77,12 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: SSH Deploy with Docker
-        shell: pwsh
+        shell: powershell
         env:
           SSH_KEY: ${{ secrets.SSH_PRIVATE }}
         run: |
           $env:SSH_KEY | Out-File -FilePath $env:TEMP\ssh_key -Encoding ASCII
-          ssh -i $env:TEMP\ssh_key -o StrictHostKeyChecking=no -p 58529 mayer@kubsu.tyvik.ru ^
+          ssh -i $env:TEMP\ssh_key -o StrictHostKeyChecking=no -p 58529 mayer@kubsu.tyvik.ru `
           "docker pull $DOCKER_IMAGE:latest
             docker stop app || true
             docker rm app || true
