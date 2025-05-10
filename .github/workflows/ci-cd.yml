@@ -76,23 +76,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Save SSH key
-        shell: cmd
-        run: |
-          echo %PRIVATE_REMOTE: =^% > id_rsa
-        env:
-          PRIVATE_REMOTE: ${{ secrets.SSH_PRIVATE }}
-
-      - name: Fix SSH key permissions
-        shell: cmd
-        run: |
-          icacls id_rsa /inheritance:r
-          icacls id_rsa /grant:r "%USERNAME%:R"
-
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{secrets.SSH_PRIVATE}}
+          
       - name: Deploy to server
         shell: cmd
         run: |
-          ssh -i id_rsa -o StrictHostKeyChecking=no -p 58529 mayer@kubsu.tyvik.ru ^
+          ssh -o StrictHostKeyChecking=no -p 58529 mayer@kubsu.tyvik.ru ^
           "docker pull %DOCKER_IMAGE%:latest && ^
           (docker stop app || exit 0) && ^
           (docker rm app || exit 0) && ^
