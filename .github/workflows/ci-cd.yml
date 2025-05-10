@@ -83,12 +83,9 @@ jobs:
         run: |
           $env:SSH_KEY | Out-File -FilePath $env:TEMP\ssh_key -Encoding ASCII
           ssh -i $env:TEMP\ssh_key -o StrictHostKeyChecking=no -p 58529 mayer@kubsu.tyvik.ru `
-          "docker pull $DOCKER_IMAGE:latest
-            docker stop app || true
-            docker rm app || true
-            docker run -d \
-              --name app \
-              -p $APP_PORT:$CONTAINER_PORT \
-              $DOCKER_IMAGE:latest"
+          "docker pull $DOCKER_IMAGE:latest; 
+          docker stop app || true; 
+          docker rm app || true; 
+          docker run -d --name app -p ${APP_PORT}:${CONTAINER_PORT} $DOCKER_IMAGE:latest"
           Remove-Item $env:TEMP\ssh_key
             
