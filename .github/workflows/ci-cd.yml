@@ -7,7 +7,7 @@ on:
     branches: [ "master" ]
 
 env:
-  DOCKER_IMAGE: ghcr.io/hidinLitKit/unicicdtest
+  DOCKER_IMAGE: ghcr.io/hidinlitkit/unicicdtest
   APP_PORT: 60080
   CONTAINER_PORT: 8081
 
@@ -104,7 +104,7 @@ jobs:
           $token = "${{ secrets.GITHUB_TOKEN }}"
     
           $commands = @"
-          podman login ghcr.io -u ${{ github.actor }} -p $token
+          podman login ghcr.io -u hidinLitKit -p $token
           podman pull ${image}:latest
           podman stop app || echo "No container to stop"
           podman rm app || echo "No container to remove"
