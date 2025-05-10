@@ -79,15 +79,15 @@ jobs:
       - name: SSH Deploy with Docker
         uses: appleboy/ssh-action@v1.0.0
         with:
-        host: kubsu.tyvik.ru
-        username: mayer
-        port: 58529
-        key: ${{ secrets.SSH_PRIVATE }}
-        script: |
-          docker pull $DOCKER_IMAGE:latest
-          docker stop app || true
-          docker rm app || true
-          docker run -d \
-            --name app \
-            -p $APP_PORT:$CONTAINER_PORT \
-            $DOCKER_IMAGE:latest
+          host: kubsu.tyvik.ru
+          username: mayer
+          port: 58529
+          key: ${{ secrets.SSH_PRIVATE }}
+          script: |
+            docker pull $DOCKER_IMAGE:latest
+            docker stop app || true
+            docker rm app || true
+            docker run -d \
+              --name app \
+              -p $APP_PORT:$CONTAINER_PORT \
+              $DOCKER_IMAGE:latest
