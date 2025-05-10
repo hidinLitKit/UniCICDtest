@@ -108,7 +108,7 @@ jobs:
           podman pull ${image}:latest
           podman stop app || echo "No container to stop"
           podman rm app || echo "No container to remove"
-          podman run --name app --net=host ${image}:latest 
+          podman run -d --name app --net=host ${image}:latest 
           "@
     
 
