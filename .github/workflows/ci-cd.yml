@@ -75,17 +75,19 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up SSH
-        uses: webfactory/ssh-agent@v0.5.3
+      
+      - name: SSH Deploy with Docker
+        uses: appleboy/ssh-action@v1.0.0
         with:
-          ssh-private-key: ${{secrets.SSH_PRIVATE}}
-          
-      - name: Deploy to server
-        shell: cmd
-        run: |
-          ssh -o StrictHostKeyChecking=no -p 58529 mayer@kubsu.tyvik.ru ^
-          "docker pull %DOCKER_IMAGE%:latest && ^
-          (docker stop app || exit 0) && ^
-          (docker rm app || exit 0) && ^
-          docker run -d --name app -p %APP_PORT%:%CONTAINER_PORT% %DOCKER_IMAGE%:latest"
+        host: kubsu.tyvik.ru  
+        username: mayer
+        port: 58529
+        key: ${{ secrets.SSH_PRIVATE }}
+        script: |
+          docker pull $DOCKER_IMAGE:latest
+          docker stop app || true
+          docker rm app || true
+          docker run -d \
+            --name app \
+            -p $APP_PORT:$CONTAINER_PORT \
+            $DOCKER_IMAGE:latest
