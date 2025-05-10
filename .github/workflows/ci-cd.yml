@@ -99,10 +99,10 @@ jobs:
         shell: powershell
         run: |
           $commands = @"
-          docker pull $env:DOCKER_IMAGE`:latest
-          docker stop app || true
-          docker rm app || true
-          docker run -d --name app -p $env:APP_PORT`:$env:CONTAINER_PORT $env:DOCKER_IMAGE`:latest
+          podman pull $env:DOCKER_IMAGE`:latest
+          podman stop app || true
+          podman rm app || true
+          podman run -d --name app -p $env:APP_PORT`:$env:CONTAINER_PORT $env:DOCKER_IMAGE`:latest
           "@
           
           ssh -v -i "$env:USERPROFILE\.ssh\kub_key" -o StrictHostKeyChecking=no -p 58529 mayer@kubsu.tyvik.ru $commands
