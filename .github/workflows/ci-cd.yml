@@ -101,13 +101,16 @@ jobs:
           $image = "${{ env.DOCKER_IMAGE }}"
           $appPort = "${{ env.APP_PORT }}"
           $containerPort = "${{ env.CONTAINER_PORT }}"
-          
+          $token = "${{ secrets.GITHUB_TOKEN }}"
+    
           $commands = @"
-          podman pull ${image}:latest || exit 1
+          echo "$token" | podman login ghcr.io -u ${{ github.actor }} --password-stdin
+          podman pull ${image}:latest
           podman stop app || echo "No container to stop"
           podman rm app || echo "No container to remove"
           podman run -d --name app -p ${appPort}:${containerPort} ${image}:latest
           "@
+    
 
           
           ssh -v -i "$env:USERPROFILE\.ssh\kub_key" -o StrictHostKeyChecking=no -p 58529 mayer@kubsu.tyvik.ru $commands
